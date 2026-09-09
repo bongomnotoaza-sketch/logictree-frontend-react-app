@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import SidebarBrand from "./sidebar-brand";
 import SidebarNav from "./sidebar-nav";
 import SidebarFooter from "./sidebar-footer";
-import SidebarUpdates from "../updates/sidebar-updates";
+import SidebarUpdates, { type UpdatesFilter } from "../updates/sidebar-updates";
 import TerminalSidebar from "../terminal/terminal-sidebar";
 import FileSideBar from "../File/file-sidebar";
 import CourseSidebar, { type CourseFilter } from "../courses/courses-sidebar";
