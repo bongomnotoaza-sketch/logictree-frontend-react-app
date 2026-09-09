@@ -40,8 +40,8 @@ const NAV_LINKS = [
 ];
 
 interface LandingPageProps {
-  /** Called when the user clicks a "start building" / "create account" CTA.
-   *  For now this just switches the app into the dashboard view. */
+  /** Called when the user clicks a "start building" / "create account" / "log in" CTA.
+   *  For now this just switches the app into the login/dashboard view. */
   onStartBuilding?: () => void;
 }
 
@@ -96,14 +96,13 @@ export default function LandingPage({ onStartBuilding }: LandingPageProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <a href="/login" className="hidden sm:block">
-              <Button
-                variant="ghost"
-                className="text-[#f4f6f4] hover:bg-[#10161380] hover:text-[#f4f6f4]"
-              >
-                Log in
-              </Button>
-            </a>
+            <Button
+              variant="ghost"
+              onClick={onStartBuilding}
+              className="hidden sm:block text-[#f4f6f4] hover:bg-[#10161380] hover:text-[#f4f6f4]"
+            >
+              Log in
+            </Button>
             <a href="/signup">
               <Button className="bg-[#1f5c3f] text-[#eafaf1] hover:bg-[#276b49]">Sign up</Button>
             </a>
@@ -131,13 +130,15 @@ export default function LandingPage({ onStartBuilding }: LandingPageProps) {
                   {link.label}
                 </a>
               ))}
-              <a
-                href="/login"
-                onClick={() => setMenuOpen(false)}
-                className="px-3 py-2.5 rounded-md text-sm hover:bg-[#10161380]"
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  onStartBuilding?.();
+                }}
+                className="px-3 py-2.5 rounded-md text-sm text-left hover:bg-[#10161380]"
               >
                 Log in
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -351,15 +352,14 @@ export default function LandingPage({ onStartBuilding }: LandingPageProps) {
               >
                 Create your account
               </Button>
-              <a href="/login">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-[#232f29] text-[#f4f6f4] hover:bg-[#10161380] hover:border-[#276b49]"
-                >
-                  Log in
-                </Button>
-              </a>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={onStartBuilding}
+                className="border-[#232f29] text-[#f4f6f4] hover:bg-[#10161380] hover:border-[#276b49]"
+              >
+                Log in
+              </Button>
             </div>
 
             <div className="mt-16 grid sm:grid-cols-3 gap-6 text-left border-t border-[#232f29] pt-10">
