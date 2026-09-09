@@ -1,0 +1,24 @@
+import type { FC } from "react";
+
+interface EventCardProps {
+  
+  event: string;
+  description: string;
+  datetoevent: string;
+}
+
+const EventCard: FC<EventCardProps> = ({  event, description, datetoevent }) => {
+  return (
+    <div className="relative flex w-full m-0 items-center gap-3 rounded-md border-b border-white bg-white/70 p-3 transition-all duration-300 ease-out hover:-translate-y-0.5">
+      
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-sm font-semibold text-black">{event}</h3>
+        <p className="mt-0.5 truncate text-xs text-black">{description}</p>
+      </div>
+
+      <span className="shrink-0 self-start text-[11px] text-black">{datetoevent}</span>
+    </div>
+  );
+};
+
+export default EventCard;

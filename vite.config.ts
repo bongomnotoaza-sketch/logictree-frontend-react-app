@@ -1,0 +1,28 @@
+import react from '@vitejs/plugin-react'
+import path from "path"
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+import vueJsx from '@vitejs/plugin-vue-jsx';
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+    vueJsx()
+  ],
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    proxy: {
+      '/auth': 'https://www.logictree.co.za',
+      '/filesystem': 'https://www.logictree.co.za',
+      // '/intent': 'http://127.0.0.1:4002',   // uncomment when you wire up intent_clarifier
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+})
