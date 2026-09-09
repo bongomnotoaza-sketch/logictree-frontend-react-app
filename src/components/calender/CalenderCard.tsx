@@ -3,11 +3,23 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const VIEWS = ["month", "week", "day"];
+type CalendarEvent = {
+  date: string;
+  title: string;
+  time?: string;
+};
+
+type CalendarView = "month" | "week" | "day";
+
+type CalendarCardProps = {
+  events?: CalendarEvent[];
+};
+
+const VIEWS: CalendarView[] = ["month", "week", "day"];
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
-function isSameDay(a, b) {
+function isSameDay(a: Date, b: Date): boolean {
   return (
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
@@ -15,19 +27,19 @@ function isSameDay(a, b) {
   );
 }
 
-function addDays(date, n) {
+function addDays(date: Date, n: number): Date {
   const d = new Date(date);
   d.setDate(d.getDate() + n);
   return d;
 }
 
-function addMonths(date, n) {
+function addMonths(date: Date, n: number): Date {
   const d = new Date(date);
   d.setMonth(d.getMonth() + n);
   return d;
 }
 
-function formatHour(h) {
+function formatHour(h: number): string {
   const period = h < 12 ? "am" : "pm";
   const hour12 = h % 12 === 0 ? 12 : h % 12;
   return `${hour12}${period}`;
@@ -35,23 +47,24 @@ function formatHour(h) {
 
 // Always returns a complete 6-week (42-day) grid so every visible row is
 // a full week — no month ever looks "cut off" partway through.
-function getMonthGrid(anchor) {
+function getMonthGrid(anchor: Date): Date[] {
   const firstOfMonth = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
   const gridStart = addDays(firstOfMonth, -firstOfMonth.getDay());
   return Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
 }
 
-function getWeekDates(anchor) {
+function getWeekDates(anchor: Date): Date[] {
   const start = addDays(anchor, -anchor.getDay());
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 }
 
-export function CalendarCard({ events = [] }) {
-  const [anchor, setAnchor] = useState(new Date());
-  const [view, setView] = useState("month");
+export function CalendarCard({ events = [] }: CalendarCardProps) {
+  const [anchor, setAnchor] = useState<Date>(new Date());
+  const [view, setView] = useState<CalendarView>("month");
   const today = useMemo(() => new Date(), []);
 
-  const eventsForDate = (d) => events.filter((e) => isSameDay(new Date(e.date), d));
+  const eventsForDate = (d: Date): CalendarEvent[] =>
+    events.filter((e) => isSameDay(new Date(e.date), d));
 
   const monthGrid = useMemo(() => getMonthGrid(anchor), [anchor]);
   const weekDates = useMemo(() => getWeekDates(anchor), [anchor]);
@@ -95,7 +108,7 @@ export function CalendarCard({ events = [] }) {
               onClick={goNext}
               className="flex h-7 w-7 items-center justify-center text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-white"
               aria-label="Next"
-            >[#2d2d2d]
+            >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>

@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import type * as Monaco from "monaco-editor";
 
-const LANG_META = {
+type LangMeta = {
+  label: string;
+  color: string;
+  lang: string;
+};
+
+const LANG_META: Record<string, LangMeta> = {
   js: { label: "JS", color: "#f0db4f", lang: "javascript" },
   ts: { label: "TS", color: "#3178c6", lang: "typescript" },
   jsx: { label: "JSX", color: "#61dafb", lang: "javascript" },
@@ -13,12 +20,29 @@ const LANG_META = {
   md: { label: "MD", color: "#8e8e8e", lang: "markdown" },
 };
 
-function getMeta(filename) {
-  const ext = filename.split(".").pop();
-  return LANG_META[ext] || { label: "•", color: "#888888", lang: "plaintext" };
+function getMeta(filename: string): LangMeta {
+  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+  return LANG_META[ext] ?? {
+    label: "•",
+    color: "#888888",
+    lang: "plaintext",
+  };
 }
 
-const DEFAULT_FILE = {
+type EditorTab = {
+  id: string;
+  name: string;
+  value: string;
+};
+
+type FileToOpen = EditorTab | null;
+
+type MonacoEditorProps = {
+  fileToOpen?: FileToOpen;
+  onTabsChange?: (tabs: EditorTab[]) => void;
+};
+
+const DEFAULT_FILE: EditorTab = {
   id: "index-js",
   name: "index.js",
   value: `function greet(name) {
@@ -29,22 +53,25 @@ console.log(greet("world"));
 `,
 };
 
-// fileToOpen: { id, name, value } | null
-// id should be stable/unique per file (e.g. its full path) so re-selecting
-// the same file focuses the existing tab instead of duplicating it.
-//
-// onTabsChange: optional callback, fired whenever the set of open tabs
-// changes AND whenever the content of the active model changes (live typing),
-// so a parent (e.g. IdeBody -> PreviewWindow) can mirror { id, name, value }.
-export default function MonacoEditor({ fileToOpen = null, onTabsChange }) {
-  const [tabs, setTabs] = useState([DEFAULT_FILE]);
-  const [activeId, setActiveId] = useState(DEFAULT_FILE.id);
+export default function MonacoEditor({
+  fileToOpen = null,
+  onTabsChange,
+}: MonacoEditorProps) {
+  const [tabs, setTabs] = useState<EditorTab[]>([DEFAULT_FILE]);
+  const [activeId, setActiveId] = useState<string>(DEFAULT_FILE.id);
 
-  const containerRef = useRef(null);
-  const editorRef = useRef(null);
-  const monacoRef = useRef(null);
-  const modelsRef = useRef({});
-  const listenersRef = useRef({}); // id -> IDisposable from onDidChangeContent
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<typeof Monaco | null>(null);
+
+  const modelsRef = useRef<
+    Record<string, Monaco.editor.ITextModel>
+  >({});
+
+  const listenersRef = useRef<
+    Record<string, Monaco.IDisposable>
+  >({});
+
   const [ready, setReady] = useState(false);
 
   // Load Monaco from CDN once
@@ -57,13 +84,20 @@ export default function MonacoEditor({ fileToOpen = null, onTabsChange }) {
 
     const existing = document.getElementById("monaco-loader-script");
     const onLoaded = () => {
+      if (!window.require) return;
+
       window.require.config({
         paths: {
           vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs",
         },
       });
+
       window.require(["vs/editor/editor.main"], () => {
-        monacoRef.current = window.monaco;
+        const monaco = window.monaco;
+
+        if (!monaco) return;
+
+        monacoRef.current = monaco;
         setReady(true);
       });
     };
@@ -91,7 +125,7 @@ export default function MonacoEditor({ fileToOpen = null, onTabsChange }) {
 
   // Attach a content-change listener to a model exactly once, so live edits
   // flow back into `tabs` state (and therefore up to the parent).
-  function watchModel(id, model) {
+  function watchModel(id: string, model: Monaco.editor.ITextModel) {
     if (listenersRef.current[id]) return;
     const disposable = model.onDidChangeContent(() => {
       const newValue = model.getValue();
@@ -105,7 +139,9 @@ export default function MonacoEditor({ fileToOpen = null, onTabsChange }) {
   // Create editor instance once Monaco is ready
   useEffect(() => {
     if (!ready || !containerRef.current || editorRef.current) return;
+
     const monaco = monacoRef.current;
+    if (!monaco) return;
 
     monaco.editor.defineTheme("tab-dark", {
       base: "vs-dark",
@@ -152,6 +188,8 @@ export default function MonacoEditor({ fileToOpen = null, onTabsChange }) {
     if (!ready || !editorRef.current) return;
 
     const monaco = monacoRef.current;
+    if (!monaco) return;
+
     const tab = tabs.find((t) => t.id === activeId);
     if (!tab) return;
 
@@ -181,7 +219,7 @@ export default function MonacoEditor({ fileToOpen = null, onTabsChange }) {
     setActiveId(fileToOpen.id);
   }, [fileToOpen]);
 
-  function closeTab(id, e) {
+  function closeTab(id: string, e: React.MouseEvent) {
     e.stopPropagation();
     const idx = tabs.findIndex((t) => t.id === id);
     if (idx === -1) return;
