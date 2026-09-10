@@ -1,4 +1,8 @@
-export default function Video({ videoUrl }) {
+interface VideoProps {
+    videoUrl: string;
+}
+
+export default function Video({ videoUrl }: VideoProps) {
     return (
         <div className="w-[700px] h-[400px] flex items-center justify-center">
             <iframe
@@ -8,5 +12,5 @@ export default function Video({ videoUrl }) {
                 allowFullScreen
             />
         </div>
-    )
+    );
 }

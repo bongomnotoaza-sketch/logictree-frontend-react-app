@@ -1,4 +1,9 @@
-export default function CodeBox({ input, output }) {
+interface CodeBoxProps {
+    input: string;
+    output: string;
+}
+
+export default function CodeBox({ input, output }: CodeBoxProps) {
     return (
         <div className="w-[700px]">
             <div className="w-full">
@@ -9,5 +14,5 @@ export default function CodeBox({ input, output }) {
                 {output}
             </div>
         </div>
-    )
+    );
 }

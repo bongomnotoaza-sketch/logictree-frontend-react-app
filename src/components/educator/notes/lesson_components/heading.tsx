@@ -1,7 +1,11 @@
-export default function Heading({ heading }) {
+interface HeadingProps {
+    heading: string;
+}
+
+export default function Heading({ heading }: HeadingProps) {
     return (
         <h1 className="text-2xl font-bold text-left">
             {heading}
         </h1>
-    )
+    );
 }
