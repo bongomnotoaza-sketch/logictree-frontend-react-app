@@ -59,7 +59,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
   async function getCSRFToken(): Promise<string | null> {
     try {
-      const response = await fetch(`https://www.logictree.co.za/auth/get-csrf-token/`, {
+      const response = await fetch(`https://api.logictree.co.za/auth/get-csrf-token/`, {
         method: "GET",
         credentials: "include",
       });
@@ -92,7 +92,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
       if (!csrfToken) throw new Error("Could not get CSRF token");
 
       setLoading("login");
-      const loginResponse = await fetch(`https://www.logictree.co.za/auth/login/`, {
+      const loginResponse = await fetch(`https://api.logictree.co.za/auth/login/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -144,7 +144,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
         return;
       }
 
-      const response = await fetch(`https://www.logictree.co.za/auth/password-recovery/`, {
+      const response = await fetch(`https://api.logictree.co.za/auth/password-recovery/`, {
         method: "POST",
         credentials: "include",
         headers: {

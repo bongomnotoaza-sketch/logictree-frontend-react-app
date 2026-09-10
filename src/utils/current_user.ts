@@ -16,7 +16,7 @@ export interface CurrentUser {
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
   try {
-    const response = await fetch("https://www.logictree.co.za/auth/current-user/", {
+    const response = await fetch("https://api.logictree.co.za/auth/current-user/", {
       method: "GET",
       credentials: "include",
     });
