@@ -18,6 +18,7 @@ import { useFileTree } from "./components/File/file-tree-utils";
 import { getCurrentUser, type CurrentUser } from "@/utils/current_user";
 import ModuleList from "./components/educator/notes/modulelist";
 import CourseList from "./components/educator/notes/course-list";
+import LessonBuilder from "./components/educator/notes/lesson_builder";
 
 type AuthState = "checking" | "authenticated" | "unauthenticated";
 
@@ -144,7 +145,6 @@ export default function App() {
   // Determine what to show in the main content area
   const showCourseList = active === "Course" && !showModuleView && !showLessonView;
   const showModuleList = active === "Course" && showModuleView && !showLessonView;
-  // Add showLessonList if needed
 
   return (
     <div className="flex h-screen w-full bg-zinc-950 text-white">
@@ -213,7 +213,7 @@ export default function App() {
             <>
               {showCourseList && <CourseList />}
               {showModuleList && <ModuleList />}
-              {/* Add LessonList when needed */}
+              {showLessonView && <LessonBuilder />}
             </>
           ) : (
             <>
