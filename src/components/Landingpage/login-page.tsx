@@ -144,7 +144,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
         return;
       }
 
-      const response = await fetch(`/auth/password-recovery/`, {
+      const response = await fetch(`https://www.logictree.co.za/auth/password-recovery/`, {
         method: "POST",
         credentials: "include",
         headers: {
