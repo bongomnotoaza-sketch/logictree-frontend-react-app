@@ -15,6 +15,7 @@ interface SidebarProps {
   onSelect: (label: string) => void;
   onModuleViewChange?: (isModuleView: boolean) => void;
   onLessonViewChange?: (isLessonView: boolean) => void;
+  onLessonNameChange?: (name: string) => void; // NEW
 }
 
 type CoursePanelView = "course" | "module" | "lesson";
@@ -26,6 +27,7 @@ export default function EducatorSidebar({
   onSelect,
   onModuleViewChange,
   onLessonViewChange,
+  onLessonNameChange, // NEW
 }: SidebarProps) {
   const [courseFilter, setCourseFilter] = useState<CourseFilter>("all");
   const [moduleFilter, setModuleFilter] = useState<ModuleFilter>("all");
@@ -107,6 +109,7 @@ export default function EducatorSidebar({
               activeFilter={lessonFilter}
               onSelectFilter={setLessonFilter}
               onBack={handleLessonBack}
+              onActiveLabelChange={onLessonNameChange} // NEW
             />
           ) : coursePanelView === "module" ? (
             <ModuleSidebar

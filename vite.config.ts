@@ -15,8 +15,9 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     proxy: {
-      '/auth': 'https://www.logictree.co.za',
-      '/filesystem': 'https://www.logictree.co.za',
+      '/auth': 'http://127.0.0.1:4002',
+      '/filesystem': 'http://127.0.0.1:4002',
+      '/notes': 'http://127.0.0.1:4002',
       // '/intent': 'http://127.0.0.1:4002',   // uncomment when you wire up intent_clarifier
     },
   },

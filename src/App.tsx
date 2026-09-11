@@ -35,7 +35,8 @@ export default function App() {
   const [authState, setAuthState] = useState<AuthState>("checking");
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [showModuleView, setShowModuleView] = useState(false);
-  const [showLessonView, setShowLessonView] = useState(false); // Add this
+  const [showLessonView, setShowLessonView] = useState(false);
+  const [lessonName, setLessonName] = useState(""); // NEW
 
   // --- File explorer state: shared tree + path/back-forward history ---
   const { tree, loading: filesLoading, error: filesError, refetch: refreshFiles } = useFileTree();
@@ -130,18 +131,26 @@ export default function App() {
           active={active}
           onSelect={setActive}
           onModuleViewChange={setShowModuleView}
+          onLessonViewChange={setShowLessonView}
+          onLessonNameChange={setLessonName} // NEW
         />
 
         <main className="flex h-screen w-full flex-1 flex-col md:w-auto">
           <Header onMenuClick={() => setIsSidebarOpen((prev) => !prev)} />
           <div className="flex-1 min-h-0 overflow-hidden">
-            <EducatorBody active={active} showModuleView={showModuleView} />
+            <EducatorBody
+              active={active}
+              showModuleView={showModuleView}
+              showLessonView={showLessonView}
+              lessonName={lessonName} // NEW
+            />
           </div>
         </main>
       </div>
     );
   }
 
+  // ─── STUDENT / NON-ADMIN PATH (unchanged) ────────────────────────────────
   // Determine what to show in the main content area
   const showCourseList = active === "Course" && !showModuleView && !showLessonView;
   const showModuleList = active === "Course" && showModuleView && !showLessonView;
